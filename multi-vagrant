@@ -1,0 +1,47 @@
+Vagrant.configure("2") do |config|
+  servers = [
+    {
+      hostname: "master",
+      box: "ubuntu/trusty64",
+      ip: "10.0.10.10",
+      ssh_port: "2220"
+    },
+    {
+      hostname: "web01",
+      box: "ubuntu/trusty64",
+      ip: "10.0.10.11",
+      ssh_port: "2221"
+    },
+    {
+      hostname: "web02",
+      box: "ubuntu/trusty64",
+      ip: "10.0.10.12",
+      ssh_port: "2222"
+    },
+    {
+      hostname: "db",
+      box: "ubuntu/trusty64",
+      ip: "10.0.10.13",
+      ssh_port: "2223"
+    },
+    {
+      hostname: "lb",
+      box: "ubuntu/trusty64",
+      ip: "10.0.10.14",
+      ssh_port: "2224"
+    }
+  ]
+
+  servers.each do |task|
+    config.vm.define task[:hostname] do |settings|
+      settings.vm.box = task[:box]
+      settings.vm.network "private_network", ip: task[:ip]
+      settings.vm.network "forwarded_port", guest: 22, host: task[:ssh_port], id: "ssh"
+
+      settings.vm.provider :virtualbox do |vm|
+        vm.memory = "1024"
+        vm.cpus = 1
+      end
+    end
+  end
+end
